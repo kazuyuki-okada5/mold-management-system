@@ -1,0 +1,32 @@
+# .gitignore
+
+# ============================
+# Laravel
+# ============================
+/src/vendor/
+/src/node_modules/
+/src/.env
+/src/.env.backup
+/src/storage/app/public/*
+/src/storage/framework/cache/*
+/src/storage/framework/sessions/*
+/src/storage/framework/views/*
+/src/storage/logs/*
+/src/bootstrap/cache/*
+!/src/storage/logs/.gitkeep
+!/src/storage/app/public/.gitkeep
+
+# ============================
+# Docker
+# ============================
+/mysql/data/
+
+# ============================
+# OS / エディタ
+# ============================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
