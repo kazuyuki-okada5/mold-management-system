@@ -31,6 +31,8 @@
                         @endif
                     </div>
                 </div>
+
+                {{-- 操作ボタン --}}
                 <div class="flex gap-2 flex-wrap flex-shrink-0">
                     @if ($mold->status === '待機中')
                         <form method="POST" action="{{ route('molds.use-start', $mold) }}">
@@ -74,21 +76,22 @@
             </div>
         </div>
 
+        {{-- 基本情報 ＋ 予約状況 --}}
         <div class="grid grid-cols-3 gap-5">
 
             {{-- 基本情報 --}}
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
                 <h2 class="font-bold text-slate-700 mb-4 text-sm">基本情報</h2>
-                <dl class="space-y-0 text-sm">
+                <dl class="text-sm">
                     @foreach ([
-                        ['仕様',          $mold->specifications ?: '—'],
-                        ['倉庫',          $mold->warehouse ?: '—'],
-                        ['フロア',        $mold->floor ?: '—'],
-                        ['棚番号',        $mold->shelf_number ?: '—'],
-                        ['製造日',        $mold->manufacture_date?->format('Y/m/d') ?: '—'],
-                        ['累計使用回数',  $mold->total_usage_count . '回' . ($mold->max_usage_count ? ' / 最大' . $mold->max_usage_count . '回' : '')],
-                        ['今月使用回数',  $stats->this_month_count . '回'],
-                        ['総使用時間',    floor($stats->total_minutes / 60) . 'h' . ($stats->total_minutes % 60) . 'm'],
+                        ['仕様', $mold->specifications ?: '—'],
+                        ['倉庫', $mold->warehouse ?: '—'],
+                        ['フロア', $mold->floor ?: '—'],
+                        ['棚番号', $mold->shelf_number ?: '—'],
+                        ['製造日', $mold->manufacture_date?->format('Y/m/d') ?: '—'],
+                        ['累計使用回数', $mold->total_usage_count . '回' . ($mold->max_usage_count ? ' / 最大' . $mold->max_usage_count . '回' : '')],
+                        ['今月使用回数', $stats->this_month_count . '回'],
+                        ['総使用時間', intdiv($stats->total_minutes, 60) . 'h' . ($stats->total_minutes % 60) . 'm'],
                     ] as [$key, $val])
                         <div class="flex justify-between py-2 border-b border-slate-100 last:border-0">
                             <dt class="text-slate-500">{{ $key }}</dt>
@@ -164,16 +167,24 @@
                     <tbody class="divide-y divide-slate-100">
                         @foreach ($mold->usageLogs as $log)
                             <tr class="hover:bg-slate-50">
-                                <td class="px-4 py-3 font-medium text-slate-700">{{ $log->user->name }}</td>
-                                <td class="px-4 py-3 text-slate-600">{{ $log->start_time->format('Y/m/d H:i') }}</td>
-                                <td class="px-4 py-3 text-slate-600">
-                                    {{ $log->end_time?->format('Y/m/d H:i') ?? '使用中' }}
+                                <td class="px-4 py-3 font-medium text-slate-700">
+                                    {{ $log->user->name ?? '（削除済み）' }}
+                                </td>
+                                <td class="px-4 py-3 text-slate-600 text-xs">
+                                    {{ $log->start_time->format('Y/m/d H:i') }}
+                                </td>
+                                <td class="px-4 py-3 text-xs">
+                                    @if ($log->end_time)
+                                        <span class="text-slate-600">{{ $log->end_time->format('Y/m/d H:i') }}</span>
+                                    @else
+                                        <span class="text-red-600 font-semibold">使用中</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-3">
-                                    @if ($log->duration_minutes)
+                                    @if ($log->duration_minutes !== null)
                                         <span class="font-bold text-blue-700">{{ $log->duration_minutes }}分</span>
                                         <span class="text-xs text-slate-400 ml-1">
-                                            ({{ floor($log->duration_minutes / 60) }}h{{ $log->duration_minutes % 60 }}m)
+                                            ({{ intdiv($log->duration_minutes, 60) }}h{{ $log->duration_minutes % 60 }}m)
                                         </span>
                                     @else
                                         <span class="text-slate-400 text-xs">—</span>
@@ -183,9 +194,18 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                {{-- 全件リンク --}}
+                @if ($stats->total_count > 10)
+                    <div class="mt-3 pt-3 border-t border-slate-100 text-right">
+                        <a href="{{ route('usage-logs.index', ['mold_number' => $mold->mold_number]) }}"
+                            class="text-xs text-blue-600 hover:underline">
+                            全{{ $stats->total_count }}件の履歴を見る →
+                        </a>
+                    </div>
+                @endif
             @endif
         </div>
-
     </div>
 
 </x-layouts.app>

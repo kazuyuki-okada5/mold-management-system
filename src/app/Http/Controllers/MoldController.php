@@ -63,7 +63,9 @@ class MoldController extends Controller
                 COUNT(*) as total_count,
                 COALESCE(SUM(duration_minutes), 0) as total_minutes,
                 COUNT(CASE WHEN MONTH(start_time) = MONTH(NOW())
-                      AND YEAR(start_time) = YEAR(NOW()) THEN 1 END) as this_month_count
+                    AND YEAR(start_time) = YEAR(NOW()) THEN 1 END) as this_month_count,
+                COALESCE(SUM(CASE WHEN MONTH(start_time) = MONTH(NOW())
+                    AND YEAR(start_time) = YEAR(NOW()) THEN duration_minutes END), 0) as this_month_minutes
             ')
             ->first();
         // compact() で、変数を配列にまとめてビューに渡す
