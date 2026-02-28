@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class UsageLog extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'mold_id',
         'user_id',
@@ -15,6 +18,7 @@ class UsageLog extends Model
         'duration_minutes',
     ];
 
+    // start_time を Carbon インスタンスとして扱うために必要(UsageController@end で $log->start_time->diffInMinutes() を呼ぶ)
     protected $casts = [
         'start_time' => 'datetime',
         'end_time'   => 'datetime',
