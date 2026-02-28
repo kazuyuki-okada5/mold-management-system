@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\Admin;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MoldController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\UsageController;
 use App\Http\Controllers\UsageLogController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\MoldController as AdminMoldController;
+use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
-
-// コントローラーが未作成なのでクロージャ（使い捨て関数）で仮置き
 
 // トップはログインへリダイレクト
 Route::get('/', function() { return redirect()->route('login');});
@@ -41,23 +42,22 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // 管理ダッシュボード
-    Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // 金型登録・編集・削除・統計（adminのみ）
-    Route::get('/molds/stats', [Admin\MoldController::class, 'stats'])->name('molds.stats');
-    Route::get('/molds/create', [Admin\MoldController::class, 'create'])->name('molds.create');
-    Route::post('/molds', [Admin\MoldController::class, 'store'])->name('molds.store');
-    Route::get('/molds/{mold}/edit', [Admin\MoldController::class, 'edit'])->name('molds.edit');
-    Route::put('/molds/{mold}', [Admin\MoldController::class, 'update'])->name('molds.update');
-    Route::delete('/molds/{mold}', [Admin\MoldController::class, 'destroy'])->name('molds.destroy');
+    Route::get('/molds/stats', [AdminMoldController::class, 'stats'])->name('molds.stats');
+    Route::get('/molds/create', [AdminMoldController::class, 'create'])->name('molds.create');
+    Route::post('/molds', [AdminMoldController::class, 'store'])->name('molds.store');
+    Route::get('/molds/{mold}/edit', [AdminMoldController::class, 'edit'])->name('molds.edit');
+    Route::put('/molds/{mold}', [AdminMoldController::class, 'update'])->name('molds.update');
+    Route::delete('/molds/{mold}', [AdminMoldController::class, 'destroy'])->name('molds.destroy');
 
     // 予約承認・否認
-    Route::post('/reservations/{reservation}/approve', [Admin\ReservationController::class, 'approve'])->name('reservations.approve');
-    Route::post('/reservations/{reservation}/reject', [Admin\ReservationController::class, 'reject'])->name('reservations.reject');
-
+    Route::post('/reservations/{reservation}/approve', [AdminReservationController::class, 'approve'])->name('reservations.approve');
+    Route::post('/reservations/{reservation}/reject', [AdminReservationController::class, 'reject'])->name('reservations.reject');
 
     // ユーザー管理
-    Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
 
 });
 
