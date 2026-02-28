@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Reservation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'mold_id',
         'user_id',
@@ -53,7 +56,8 @@ class Reservation extends Model
     // 有効な予約（pending or approved）
     public function scopeActive($query)
     {
-        return $query->whereIn('status', ['pending', 'approved']);
+        return $query->whereIn('status', ['pending', 'approved'])
+                    ->where('reserved_end', '>=', now());
     }
 
     // 指定金型の将来の予約（詳細画面用）
