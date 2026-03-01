@@ -44,4 +44,10 @@
             </x-primary-button>
         </div>
     </form>
+    <div class="mt-4 text-center">
+        <a href="{{ route('register') }}"
+            class="text-sm text-blue-600 hover:underline">
+            新規ユーザー登録はこちら
+        </a>
+    </div>
 </x-guest-layout>
